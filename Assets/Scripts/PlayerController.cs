@@ -38,11 +38,6 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-    void FixedUpdate()
-    {
-        
-    }
-
 	void Update ()
 	{
 	    ReadInput();
@@ -60,12 +55,31 @@ public class PlayerController : MonoBehaviour
     {
         _animator.SetBool("Grounded", _grounded);
         if (_jumpInput && _grounded) _rigidbody2D.AddForce(Vector2.up * JumpStrength);
-        _rigidbody2D.velocity = new Vector2(_horizontalMovementInput * PlayerSpeed, _rigidbody2D.velocity.y);
+        _rigidbody2D.velocity = new Vector2(GetPossibleVelocity(_horizontalMovementInput) * PlayerSpeed, _rigidbody2D.velocity.y);
         _animator.SetFloat("Speed", Mathf.Abs(_horizontalMovementInput));
+    }
+
+    private float GetPossibleVelocity(float horizontalInput)
+    {
+        if (horizontalInput > 0 && RightCollider.IsTouchingLayers(GroundLayers))
+        {
+            return 0;
+        }
+        if (horizontalInput < 0 && LeftCollider.IsTouchingLayers(GroundLayers))
+        {
+            return 0;
+        }
+        return horizontalInput;
     }
 
     private bool IsGrounded()
     {
         return FeetCollider.IsTouchingLayers(GroundLayers);
+    }
+
+    public void TeleportPlayer(Vector2 targetPosition)
+    {
+        _rigidbody2D.MovePosition(targetPosition);
+        _rigidbody2D.velocity = Vector2.zero;
     }
 }
