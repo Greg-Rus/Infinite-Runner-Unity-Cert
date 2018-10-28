@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
@@ -13,7 +14,9 @@ public class PlatformController : MonoBehaviour
     public int Width;
     public int Height;
 
-    private BoxCollider2D _boxCollider2D;
+    public int CliffWidth = 0;
+    public int CliffHeight = 0;
+    public int CliffOffset = 0;
 
     private List<GameObject> _tiles;
 
@@ -21,21 +24,19 @@ public class PlatformController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-	    _boxCollider2D = GetComponent<BoxCollider2D>();
-	    _tiles = new List<GameObject>();
 	    BuildPlatform();
     }
 
     public void SetupUpPlatform(int width, int height)
     {
+        _tiles = new List<GameObject>();
         Width = width;
         Height = height;
     }
 
     private void BuildPlatform()
     {
-        _boxCollider2D.size = new Vector3(Width, Height, 0);
-        _boxCollider2D.offset = new Vector3(Width * 0.5f - 0.5f, Height * -0.5f + 0.5f, 0f);
+        AddCollider(Width, Height);
         for (int y = 0; y > -Height; y--)
         {
             for (int x = 0; x < Width; x++) 
@@ -56,6 +57,33 @@ public class PlatformController : MonoBehaviour
         {
             go.GetComponent<SpriteRenderer>().sprite = _tiles.IndexOf(go) < Width ? TopTileSprite : MidTileSprite;
         }
+    }
+
+    private void AddCollider(int width, int height, int offset = 0)
+    {
+        var collider = gameObject.AddComponent<BoxCollider2D>();
+        collider.size = new Vector3(width, height, 0);
+        collider.offset = new Vector3(width * 0.5f - 0.5f + offset, height * -0.5f + 0.5f, 0f);
+    }
+
+    public void AddCliff(int width, int height, int offset)
+    {
+        CliffWidth = width;
+        CliffHeight = height;
+        CliffOffset = offset;
+        for (int x = offset; x < offset + width; x++)
+        {
+            for (int y = 1; y <= height; y++)
+            {
+                var newTile = Instantiate(Tile, new Vector3((float)x, (float)y, 0f), Quaternion.identity);
+                _tiles.Add(newTile);
+                newTile.transform.SetParent(transform, false);
+            }
+        }
+
+        var collider = gameObject.AddComponent<BoxCollider2D>();
+        collider.size = new Vector3(width, height, 0);
+        collider.offset = new Vector3(width * 0.5f - 0.5f + offset, height * 0.5f + 0.5f, 0f);
     }
 
     void OnBecameVisible()

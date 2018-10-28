@@ -14,7 +14,7 @@ public class PlatfromBuilder : MonoBehaviour
     public float MinJumpRange = 2f;
     public float MaxJumpHeight = 3f;
     public float MinJumpHeight = 2f;
-    public int MaxPlatformWidth = 6;
+    public int MaxPlatformWidth = 8;
     public int MaxPlatformHeight = 4;
     public int MinPlatformWidthForCliff = 4;
     public int MaxCliffHeight = 2;
@@ -99,12 +99,12 @@ public class PlatfromBuilder : MonoBehaviour
                                   + new Vector2(xOffset, yOffset);
         var platform = SpawnPlatform(newPlatformPosition, newPlatformWidth, newPlatformHeight);
 
-        //if (newPlatformWidth >= MinPlatformWidthForCliff)
-        //{
-        //    var cliffWidth = Random.Range(1, newPlatformWidth - MinPlatformWidthForCliff + 1);
-        //    var maxCliffOffset = newPlatformWidth - cliffWidth;
-        //    //platform.AddCliff(cliffWidth, MaxPlatformHeight, Random.Range(1, maxCliffOffset));
-        //}
+        if (newPlatformWidth >= MinPlatformWidthForCliff)
+        {
+            var cliffWidth = Random.Range(1, newPlatformWidth - MinPlatformWidthForCliff + 1);
+            var maxCliffOffset = newPlatformWidth - cliffWidth;
+            platform.AddCliff(cliffWidth, MaxCliffHeight, Random.Range(1, maxCliffOffset));
+        }
 
         if (shouldHaveFlyingEnemy)
             SpawnFlyer(new Vector2(lastPlatform.GetPlatformRightEdge, lastPlatform.GetPlatformHeight),

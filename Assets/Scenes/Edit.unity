@@ -328,8 +328,10 @@ MonoBehaviour:
   MinJumpRange: 2
   MaxJumpHeight: 3
   MinJumpHeight: 2
-  MaxPlatformWidth: 6
+  MaxPlatformWidth: 10
   MaxPlatformHeight: 4
+  MinPlatformWidthForCliff: 4
+  MaxCliffHeight: 2
   MaxPlatformPosition: 3
   MinPlatformPosition: -2
   DespawnZone: {fileID: 1744061409}
