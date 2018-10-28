@@ -9,18 +9,23 @@ public class Enemy : MonoBehaviour {
     public string DespawnZoneTag;
     public float DeathJumpStrength;
     private CircleCollider2D _myCircleCollider2D;
-    private Rigidbody2D _myRigidbody2D;
+    protected Rigidbody2D MyRigidbody2D;
     public LayerMask DeadEnemyLayer;
+    protected bool IsAlive = true;
 
     // Use this for initialization
 	void Start ()
 	{
-	    _myCircleCollider2D = GetComponent<CircleCollider2D>();
-	    _myRigidbody2D = GetComponent<Rigidbody2D>();
-
+	    Initialize();
 	}
-	
-	// Update is called once per frame
+
+    protected virtual void Initialize()
+    {
+        _myCircleCollider2D = GetComponent<CircleCollider2D>();
+        MyRigidbody2D = GetComponent<Rigidbody2D>();
+    }
+
+    // Update is called once per frame
 	void Update () {
 		
 	}
@@ -39,9 +44,10 @@ public class Enemy : MonoBehaviour {
     {
         Debug.Log(gameObject.name + " died!");
         gameObject.layer = 10;
-        _myRigidbody2D.velocity = Vector2.zero;
-        _myRigidbody2D.gravityScale = 1f;
-        _myRigidbody2D.AddForce(Vector2.up * DeathJumpStrength);
+        MyRigidbody2D.velocity = Vector2.zero;
+        MyRigidbody2D.gravityScale = 1f;
+        MyRigidbody2D.AddForce(Vector2.up * DeathJumpStrength);
+        IsAlive = false;
     }
 
     void OnTriggerEnter2D(Collider2D col)

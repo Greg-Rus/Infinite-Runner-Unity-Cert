@@ -124,7 +124,6 @@ public class PlatfromBuilder : MonoBehaviour
     private void SpawnGroundEnemy(List<Vector2> spawnPoints)
     {
         var randomSpawnPoint = Random.Range(0, spawnPoints.Count);
-        Debug.Log("Spawning at : " + randomSpawnPoint + " count: " + spawnPoints.Count());
         var enemyPosition = spawnPoints[randomSpawnPoint];
         Instantiate(Walker, enemyPosition, Quaternion.identity);
     }
@@ -174,7 +173,7 @@ public class PlatfromBuilder : MonoBehaviour
         get
         {
             var oldestPlatform = _platformQueue.Peek();
-            return oldestPlatform.GetMiddlePlatformPosition;
+            return oldestPlatform.EnemySpawnPoints[0]+ Vector2.up*2;
         }
     }
 }
