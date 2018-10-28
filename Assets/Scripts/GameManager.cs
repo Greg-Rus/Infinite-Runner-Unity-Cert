@@ -29,14 +29,12 @@ public class GameManager : MonoBehaviour
             if (lives >= 0)
             {
                 Player.TeleportPlayer(PlatformBuilder.MiddleOfOldestPlatform);
-                Debug.Log(PlatformBuilder.MiddleOfOldestPlatform);
                 lives--;
             }
             else
             {
                 SceneManager.LoadScene(0);
             }
-
         }
     }
 }

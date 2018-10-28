@@ -5,11 +5,19 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
     public int HitPoints = 1;
-    public string PlayerTag = "Player";
+    public string PlayerTag;
+    public string DespawnZoneTag;
+    public float DeathJumpStrength;
+    private CircleCollider2D _myCircleCollider2D;
+    private Rigidbody2D _myRigidbody2D;
+    public LayerMask DeadEnemyLayer;
 
     // Use this for initialization
-	void Start () {
-		
+	void Start ()
+	{
+	    _myCircleCollider2D = GetComponent<CircleCollider2D>();
+	    _myRigidbody2D = GetComponent<Rigidbody2D>();
+
 	}
 	
 	// Update is called once per frame
@@ -20,6 +28,7 @@ public class Enemy : MonoBehaviour {
     public void TakeDamage()
     {
         HitPoints--;
+        Debug.Log("Enemy damaged. HP: " +HitPoints);
         if (HitPoints <= 0)
         {
             EnemyDied();
@@ -28,12 +37,16 @@ public class Enemy : MonoBehaviour {
 
     private void EnemyDied()
     {
-        Destroy(gameObject);
+        Debug.Log(gameObject.name + " died!");
+        gameObject.layer = 10;
+        _myRigidbody2D.velocity = Vector2.zero;
+        _myRigidbody2D.gravityScale = 1f;
+        _myRigidbody2D.AddForce(Vector2.up * DeathJumpStrength);
     }
 
-    void OnCollisionEnter2D(Collision2D col)
+    void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("Collided with: " + col.collider.tag);
-        if(col.collider.CompareTag(PlayerTag)) TakeDamage();
+        Debug.Log(col.tag);
+        if(col.CompareTag(DespawnZoneTag)) Destroy(gameObject);
     }
 }

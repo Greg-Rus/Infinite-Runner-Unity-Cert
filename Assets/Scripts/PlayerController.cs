@@ -16,11 +16,13 @@ public class PlayerController : MonoBehaviour
     private bool _jumpInput = false;
     private bool _grounded = false;
     private bool _isAirborne = false;
+    private GameObject _stompedEnemy;
 
     [Header("Grounding Settings")]
     public Transform GroundCheckAnchor;
     public float GroundCheckRadius = 0.1f;
     public LayerMask GroundLayers;
+    public LayerMask EnemyLayers;
 
     [Header("Movement Settings")]
     public float PlayerSpeed = 2f;
@@ -54,9 +56,15 @@ public class PlayerController : MonoBehaviour
     private void ProcessInput()
     {
         _animator.SetBool("Grounded", _grounded);
-        if (_jumpInput && _grounded) _rigidbody2D.AddForce(Vector2.up * JumpStrength);
+        if (_jumpInput && _grounded) Jump();
         _rigidbody2D.velocity = new Vector2(GetPossibleVelocity(_horizontalMovementInput) * PlayerSpeed, _rigidbody2D.velocity.y);
         _animator.SetFloat("Speed", Mathf.Abs(_horizontalMovementInput));
+    }
+
+    private void Jump()
+    {
+        _rigidbody2D.velocity = Vector2.zero;
+        _rigidbody2D.AddForce(Vector2.up * JumpStrength);
     }
 
     private float GetPossibleVelocity(float horizontalInput)
@@ -77,9 +85,23 @@ public class PlayerController : MonoBehaviour
         return FeetCollider.IsTouchingLayers(GroundLayers);
     }
 
+    private bool StompingEnemy()
+    {
+        return FeetCollider.IsTouchingLayers(EnemyLayers);
+    }
+
     public void TeleportPlayer(Vector2 targetPosition)
     {
         _rigidbody2D.MovePosition(targetPosition);
         _rigidbody2D.velocity = Vector2.zero;
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (StompingEnemy())
+        {
+            Jump();
+            col.gameObject.GetComponent<Enemy>().TakeDamage();
+        }
     }
 }
