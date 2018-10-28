@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
@@ -53,10 +54,11 @@ public class PlatformController : MonoBehaviour
         //    _tiles[i].GetComponent<SpriteRenderer>().sprite = TopTileSprite;
         //}
 
-        foreach (var go in _tiles)
-        {
-            go.GetComponent<SpriteRenderer>().sprite = _tiles.IndexOf(go) < Width ? TopTileSprite : MidTileSprite;
-        }
+        //foreach (var go in _tiles)
+        //{
+        //    go.GetComponent<SpriteRenderer>().sprite = MidTileSprite;
+        //}
+        AssignTileSprites();
     }
 
     private void AddCollider(int width, int height, int offset = 0)
@@ -84,6 +86,8 @@ public class PlatformController : MonoBehaviour
         var collider = gameObject.AddComponent<BoxCollider2D>();
         collider.size = new Vector3(width, height, 0);
         collider.offset = new Vector3(width * 0.5f - 0.5f + offset, height * 0.5f + 0.5f, 0f);
+
+        AssignTileSprites();
     }
 
     void OnBecameVisible()
@@ -119,6 +123,20 @@ public class PlatformController : MonoBehaviour
         get
         {
             return (Vector2)transform.position + new Vector2((GetPlatformRightEdge - GetPlatformLeftEdge) * 0.5f, 0.5f);
+        }
+    }
+
+    private void AssignTileSprites()
+    {
+        var columns = _tiles.GroupBy(o => o.transform.position.x);
+        foreach (var gameObjects in columns)
+        {
+            var sortedTiles = gameObjects.OrderByDescending(go => go.transform.position.y);
+            sortedTiles.First().GetComponent<SpriteRenderer>().sprite = TopTileSprite;
+            foreach (var go in sortedTiles.Skip(1))
+            {
+                go.GetComponent<SpriteRenderer>().sprite = MidTileSprite;
+            }
         }
     }
 }
