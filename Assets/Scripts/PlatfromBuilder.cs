@@ -23,6 +23,8 @@ public class PlatfromBuilder : MonoBehaviour
     public float LowestPlatform { get; private set; }
     public Transform DespawnZone;
 
+    public GameManager gameManager;
+
     [Header("EnemyPlacement")]
     public float FlyingEnemyChance;
 
@@ -118,14 +120,17 @@ public class PlatfromBuilder : MonoBehaviour
     private void SpawnFlyer(Vector2 gapStart, Vector2 gapEnd)
     {
         var enemyPosition = (gapEnd - gapStart) * 0.5f + gapStart;
-        Instantiate(Bobber, enemyPosition, Quaternion.identity);
+        var enemy = Instantiate(Bobber, enemyPosition, Quaternion.identity);
+        enemy.OnDeathCallback = gameManager.OnEnemyDeath;
+
     }
 
     private void SpawnGroundEnemy(List<Vector2> spawnPoints)
     {
         var randomSpawnPoint = Random.Range(0, spawnPoints.Count);
         var enemyPosition = spawnPoints[randomSpawnPoint];
-        Instantiate(Walker, enemyPosition, Quaternion.identity);
+        var enemy = Instantiate(Walker, enemyPosition, Quaternion.identity);
+        enemy.OnDeathCallback = gameManager.OnEnemyDeath;
     }
 
     private Vector2 FlyingEnemyGap()

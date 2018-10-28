@@ -29,7 +29,6 @@ public class WalkerEnemy : Enemy
         MyRigidbody2D.AddForce(this.direction*speed);
         if (MyRigidbody2D.velocity == Vector2.zero)
         {
-            Debug.Log("Velocity turn");
             TurnAround();
         }
     }
@@ -40,15 +39,8 @@ public class WalkerEnemy : Enemy
         Debug.DrawRay(transform.position, direction + Vector2.down * 2, Color.red);
         if (!hit)
         {
-            Debug.Log("Turning!");
             TurnAround();
         }
-        else
-        {
-            Debug.Log(hit.collider.tag);
-        }
-
-
     }
 
     private void TurnAround()
