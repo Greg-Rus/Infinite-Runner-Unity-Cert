@@ -110,7 +110,7 @@ public class PlatfromBuilder : MonoBehaviour
             SpawnFlyer(new Vector2(lastPlatform.GetPlatformRightEdge, lastPlatform.GetPlatformHeight),
                 newPlatformPosition);
         if (shouldHaveGroundEnemy)
-            SpawnGroundEnemy(newPlatformPosition, new Vector2(platform.GetPlatformRightEdge, platform.GetPlatformHeight));
+            SpawnGroundEnemy(platform.EnemySpawnPoints);
 
         return platform;
     }
@@ -121,9 +121,11 @@ public class PlatfromBuilder : MonoBehaviour
         Instantiate(Bobber, enemyPosition, Quaternion.identity);
     }
 
-    private void SpawnGroundEnemy(Vector2 platformStart, Vector2 platformEnd)
+    private void SpawnGroundEnemy(List<Vector2> spawnPoints)
     {
-        var enemyPosition = (platformEnd - platformStart) * 0.5f + platformStart;
+        var randomSpawnPoint = Random.Range(0, spawnPoints.Count);
+        Debug.Log("Spawning at : " + randomSpawnPoint + " count: " + spawnPoints.Count());
+        var enemyPosition = spawnPoints[randomSpawnPoint];
         Instantiate(Walker, enemyPosition, Quaternion.identity);
     }
 

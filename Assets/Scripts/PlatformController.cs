@@ -20,19 +20,22 @@ public class PlatformController : MonoBehaviour
     public int CliffOffset = 0;
 
     private List<GameObject> _tiles;
+    public List<Vector2> EnemySpawnPoints;
 
     private bool BecameVisible = false;
 	// Use this for initialization
 	void Start ()
 	{
-	    BuildPlatform();
+	    //BuildPlatform();
     }
 
     public void SetupUpPlatform(int width, int height)
     {
         _tiles = new List<GameObject>();
+        EnemySpawnPoints = new List<Vector2>();
         Width = width;
         Height = height;
+        BuildPlatform();
     }
 
     private void BuildPlatform()
@@ -48,16 +51,6 @@ public class PlatformController : MonoBehaviour
 
             }
         }
-
-        //for (int i = 0; i < Width; i++)
-        //{
-        //    _tiles[i].GetComponent<SpriteRenderer>().sprite = TopTileSprite;
-        //}
-
-        //foreach (var go in _tiles)
-        //{
-        //    go.GetComponent<SpriteRenderer>().sprite = MidTileSprite;
-        //}
         AssignTileSprites();
     }
 
@@ -138,5 +131,14 @@ public class PlatformController : MonoBehaviour
                 go.GetComponent<SpriteRenderer>().sprite = MidTileSprite;
             }
         }
+
+        SetEnemySpawnPoints();
+    }
+
+    private void SetEnemySpawnPoints()
+    {
+        EnemySpawnPoints = _tiles.GroupBy(o => o.transform.position.x)
+            .Select(group => group.OrderByDescending(go => go.transform.position.y).First().transform.position)
+            .Select(pos => (Vector2)pos + Vector2.up).ToList();
     }
 }
